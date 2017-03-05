@@ -106,7 +106,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
      */
     open var uiOptions = UiOptions()
     
-    open var allowPhotoCatpure: Bool = false
+    open var allowPhotoCapture: Bool = false
     
     //===== Private
     fileprivate var initialized: Bool = false
@@ -909,7 +909,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         }
         
         //===== Create an optional still capture output
-        if (self.allowPhotoCatpure)
+        if (self.allowPhotoCapture)
         {
             self.stillImageOutput = AVCaptureStillImageOutput.init()
             self.stillImageOutput.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
