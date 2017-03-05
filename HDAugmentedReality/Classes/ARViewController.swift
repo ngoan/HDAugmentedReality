@@ -74,7 +74,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     /// Image for close button. If not set, default one is used.
     //public var closeButtonImage = UIImage(named: "hdar_close", inBundle: NSBundle(forClass: ARViewController.self), compatibleWithTraitCollection: nil)
     open var closeButtonImage: UIImage?
-    {
+        {
         didSet
         {
             closeButton?.setImage(self.closeButtonImage, for: UIControlState())
@@ -83,7 +83,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     /// Enables map debugging and some other debugging features, set before controller is shown
     @available(*, deprecated, message: "Will be removed in next version, use uiOptions.debugEnabled.")
     open var debugEnabled = false
-    {
+        {
         didSet
         {
             self.uiOptions.debugEnabled = debugEnabled
@@ -106,6 +106,8 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
      */
     open var uiOptions = UiOptions()
     
+    open var allowPhotoCatpure: Bool = false
+    
     //===== Private
     fileprivate var initialized: Bool = false
     fileprivate var cameraSession: AVCaptureSession = AVCaptureSession()
@@ -124,11 +126,12 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     fileprivate var closeButton: UIButton?
     fileprivate var currentHeading: Double = 0
     fileprivate var lastLocation: CLLocation?
-
+    
     fileprivate var debugLabel: UILabel?
     fileprivate var debugMapButton: UIButton?
     fileprivate var didLayoutSubviews: Bool = false
-
+    fileprivate var stillImageOutput: AVCaptureStillImageOutput = AVCaptureStillImageOutput()
+    
     //==========================================================================================================================================================
     // MARK:                                                        Init
     //==========================================================================================================================================================
@@ -904,6 +907,14 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             self.view.layer.insertSublayer(cameraLayer, at: 0)
             self.cameraLayer = cameraLayer
         }
+        
+        //===== Create an optional still capture output
+        if (self.allowPhotoCatpure)
+        {
+            self.stillImageOutput = AVCaptureStillImageOutput.init()
+            self.stillImageOutput.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+            self.cameraSession.addOutput(self.stillImageOutput)
+        }
     }
     
     /// Tries to find back video device and add video input to it. This method can be used to check if device has hardware available for augmented reality.
@@ -1024,16 +1035,16 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     {
         return UIInterfaceOrientationMask(rawValue: self.interfaceOrientationMask.rawValue)
     }
-
+    
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
     {
         super.viewWillTransition(to: size, with: coordinator)
-
+        
         coordinator.animate(alongsideTransition:
-        {
-            (coordinatorContext) in
-            
-            self.setOrientation(UIApplication.shared.statusBarOrientation)
+            {
+                (coordinatorContext) in
+                
+                self.setOrientation(UIApplication.shared.statusBarOrientation)
         })
         {
             [unowned self] (coordinatorContext) in
@@ -1066,7 +1077,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             self.trackingManager.orientation = deviceOrientation
         }
     }
-
+    
     //==========================================================================================================================================================
     //MARK:                                                        UI
     //==========================================================================================================================================================
@@ -1180,12 +1191,8 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     
     public func captureImage(callback: @escaping (UIImage) -> Void)
     {
-        var stillImageOutput = AVCaptureStillImageOutput.init()
-        stillImageOutput.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
-        self.cameraSession.addOutput(stillImageOutput)
-        
-        if let videoConnection = stillImageOutput.connection(withMediaType:AVMediaTypeVideo){
-            stillImageOutput.captureStillImageAsynchronously(from:videoConnection, completionHandler: {
+        if let videoConnection = self.stillImageOutput.connection(withMediaType:AVMediaTypeVideo){
+            self.stillImageOutput.captureStillImageAsynchronously(from:videoConnection, completionHandler: {
                 (sampleBuffer, error) in
                 var imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
                 var dataProvider = CGDataProvider.init(data: imageData as! CFData)
@@ -1196,20 +1203,3 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
