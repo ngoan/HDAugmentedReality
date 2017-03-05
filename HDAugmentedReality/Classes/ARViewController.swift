@@ -107,6 +107,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     open var uiOptions = UiOptions()
     
     open var allowPhotoCapture: Bool = false
+    open var shouldUseFrontCamera: Bool = false
     
     //===== Private
     fileprivate var initialized: Bool = false
@@ -891,7 +892,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         self.cameraLayer = nil
         
         //===== Video device/video input
-        let captureSessionResult = ARViewController.createCaptureSession()
+        let captureSessionResult = ARViewController.createCaptureSession(frontFacing: self.shouldUseFrontCamera)
         guard captureSessionResult.error == nil, let session = captureSessionResult.session else
         {
             print("HDAugmentedReality: Cannot create capture session, use createCaptureSession method to check if device is capable for augmented reality.")
@@ -918,11 +919,11 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     }
     
     /// Tries to find back video device and add video input to it. This method can be used to check if device has hardware available for augmented reality.
-    open class func createCaptureSession() -> (session: AVCaptureSession?, error: NSError?)
+    open class func createCaptureSession(frontFacing: Bool) -> (session: AVCaptureSession?, error: NSError?)
     {
         var error: NSError?
         var captureSession: AVCaptureSession?
-        var backVideoDevice: AVCaptureDevice?
+        var frontOrBackVideoDevice: AVCaptureDevice?
         let videoDevices = AVCaptureDevice.devices(withMediaType: AVMediaTypeVideo)
         
         // Get back video device
@@ -930,19 +931,19 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         {
             for captureDevice in videoDevices
             {
-                if (captureDevice as AnyObject).position == AVCaptureDevicePosition.back
+                if (captureDevice as AnyObject).position == (frontFacing ? AVCaptureDevicePosition.front : AVCaptureDevicePosition.back)
                 {
-                    backVideoDevice = captureDevice as? AVCaptureDevice
+                    frontOrBackVideoDevice = captureDevice as? AVCaptureDevice
                     break
                 }
             }
         }
         
-        if backVideoDevice != nil
+        if frontOrBackVideoDevice != nil
         {
             var videoInput: AVCaptureDeviceInput!
             do {
-                videoInput = try AVCaptureDeviceInput(device: backVideoDevice)
+                videoInput = try AVCaptureDeviceInput(device: frontOrBackVideoDevice)
             } catch let error1 as NSError {
                 error = error1
                 videoInput = nil
