@@ -1187,7 +1187,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         /// Enables/Disables debug UI, like heading label, map button, some views when updating/reloading.
         public var debugEnabled = false
         /// Enables/Disables close button.
-        public var closeButtonEnabled = true
+        public var closeButtonEnabled = false
     }
     
     public func captureImage(callback: @escaping (UIImage) -> Void)
