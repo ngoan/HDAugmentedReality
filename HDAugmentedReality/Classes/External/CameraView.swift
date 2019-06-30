@@ -23,7 +23,7 @@ open class CameraView: UIView
     open var videoGravity: AVLayerVideoGravity = AVLayerVideoGravity.resizeAspectFill
 
     fileprivate var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    fileprivate var captureSession: AVCaptureSession?
+    var captureSession: AVCaptureSession?
 
     //==========================================================================================================================================================
     //MARK:                                                        UIView overrides

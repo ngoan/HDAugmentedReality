@@ -38,7 +38,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     {
         didSet
         {
-            self.closeButton?.setImage(self.closeButtonImage, for: UIControlState())
+            self.closeButton?.setImage(self.closeButtonImage, for: UIControl.State.normal)
         }
     }
     
@@ -101,7 +101,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     //==========================================================================================================================================================
     // MARK:                                                        Init
     //==========================================================================================================================================================
-    init()
+    public init()
     {
         super.init(nibName: nil, bundle: nil)
         self.initializeInternal()
@@ -136,7 +136,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     }
     
     /// Intended for use in subclasses, no need to call super
-    internal func initialize()
+    open func initialize()
     {
         
     }
@@ -209,7 +209,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         self.layoutUi()
     }
     
-    internal func appDidEnterBackground(_ notification: Notification)
+    @objc internal func appDidEnterBackground(_ notification: Notification)
     {
         if self.view.window != nil
         {
@@ -219,7 +219,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         }
     }
     
-    internal func appWillEnterForeground(_ notification: Notification)
+    @objc internal func appWillEnterForeground(_ notification: Notification)
     {
         if self.view.window != nil
         {
@@ -237,9 +237,9 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     {
         /* XIRO */
         if (self.shouldUseFrontCamera) {
-            self.cameraView.devicePosition = AVCaptureDevicePosition.front
+            self.cameraView.devicePosition = AVCaptureDevice.Position.front
         } else {
-            self.cameraView.devicePosition = AVCaptureDevicePosition.back
+            self.cameraView.devicePosition = AVCaptureDevice.Position.back
         }
         
         // Presenter
@@ -295,7 +295,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         return self.annotations
     }
     
-    fileprivate func reload(reloadType currentReload: ARViewController.ReloadType)
+    open func reload(reloadType currentReload: ARViewController.ReloadType)
     {
         // Explanation why pendingHighestRankingReload is used: if this method is called in this order:
         // 1. currentReload = annotationsChanged, arStatus.ready = false
@@ -322,7 +322,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         self.presenter.reload(annotations: self.annotations, reloadType: highestRankingReload)
     }
     
-    fileprivate func calculateDistancesForAnnotations()
+    open func calculateDistancesForAnnotations()
     {
         guard let userLocation = self.arStatus.userLocation else { return }
         
@@ -331,10 +331,10 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             annotation.distanceFromUser = annotation.location.distance(from: userLocation)
         }
         
-        //self.annotations = self.annotations.sorted { $0.distanceFromUser < $1.distanceFromUser }
+        self.annotations = self.annotations.sorted { $0.distanceFromUser < $1.distanceFromUser }
     }
     
-    fileprivate func calculateAzimuthsForAnnotations()
+    open func calculateAzimuthsForAnnotations()
     {
         guard let userLocation = self.arStatus.userLocation else { return }
         
@@ -348,7 +348,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     //==========================================================================================================================================================
     // MARK:                                    Events: ARLocationManagerDelegate/Display timer
     //==========================================================================================================================================================
-    internal func displayTimerTick()
+    @objc internal func displayTimerTick()
     {
         if self.uiOptions.simulatorDebugging
         {
@@ -418,8 +418,8 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     {
         self.cameraView.startRunning()
         self.trackingManager.startTracking(notifyLocationFailure: notifyLocationFailure)
-        self.displayTimer = CADisplayLink(target: self, selector: #selector(ARViewController.displayTimerTick))
-        self.displayTimer?.add(to: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        self.displayTimer = CADisplayLink(target: self, selector: #selector(ARViewController.displayTimerTick))        
+        self.displayTimer?.add(to: RunLoop.current, forMode: RunLoop.Mode.defaultRunLoopMode)
     }
     
     fileprivate func stopCameraAndTracking()
@@ -446,7 +446,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
     {
         super.viewWillTransition(to: size, with: coordinator)
-
+        self.presenter.isHidden = true
         coordinator.animate(alongsideTransition:
         {
             (coordinatorContext) in
@@ -455,7 +455,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         })
         {
             [unowned self] (coordinatorContext) in
-            
+            self.presenter.isHidden = false
             self.layoutAndReloadOnOrientationChange()
         }
     }
@@ -464,8 +464,9 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     {
         CATransaction.begin()
         CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+        self.trackingManager.catchupHeadingPitch()
         self.layoutUi()
-        self.reload(reloadType: .headingChanged)
+        self.reload(reloadType: .annotationsChanged)
         CATransaction.commit()
     }
     
@@ -485,7 +486,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             // Formula: hFOV = 2 * atan[ tan(vFOV/2) * (width/height) ]
             // width, height are camera width/height
             
-            if UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)
+            if UIApplication.shared.statusBarOrientation.isLandscape
             {
                 hFov = Double(retrieviedDevice.activeFormat.videoFieldOfView)   // This is horizontal FOV - FOV of the wider side of the screen
                 vFov = radiansToDegrees(2 * atan( tan(degreesToRadians(hFov / 2)) * Double(frame.size.height / frame.size.width)))
@@ -499,7 +500,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         // Used in simulator
         else
         {
-            if UIInterfaceOrientationIsLandscape(UIApplication.shared.statusBarOrientation)
+            if UIApplication.shared.statusBarOrientation.isLandscape
             {
                 hFov = Double(58)   // This is horizontal FOV - FOV of the wider side of the screen
                 vFov = radiansToDegrees(2 * atan( tan(degreesToRadians(hFov / 2)) * Double(self.view.bounds.size.height / self.view.bounds.size.width)))
@@ -535,16 +536,16 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         }
         
         // Close button - make it customizable
-        let closeButton: UIButton = UIButton(type: UIButtonType.custom)
-        closeButton.setImage(closeButtonImage, for: UIControlState());
+        let closeButton: UIButton = UIButton(type: UIButton.ButtonType.custom)
+        closeButton.setImage(closeButtonImage, for: UIControl.State.normal);
         closeButton.frame = CGRect(x: self.view.bounds.size.width - 45, y: 5,width: 40,height: 40)
-        closeButton.addTarget(self, action: #selector(ARViewController.closeButtonTap), for: UIControlEvents.touchUpInside)
-        closeButton.autoresizingMask = [UIViewAutoresizing.flexibleLeftMargin, UIViewAutoresizing.flexibleBottomMargin]
+        closeButton.addTarget(self, action: #selector(ARViewController.closeButtonTap), for: UIControl.Event.touchUpInside)
+        closeButton.autoresizingMask = [UIView.AutoresizingMask.flexibleLeftMargin, UIView.AutoresizingMask.flexibleBottomMargin]
         self.view.addSubview(closeButton)
         self.closeButton = closeButton
     }
     
-    internal func closeButtonTap()
+    @objc internal func closeButtonTap()
     {
         self.presentingViewController?.dismiss(animated: true, completion: nil)
     }
@@ -555,16 +556,16 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     }
     
     /// Checks if back video device is available.
-    open static func isAllHardwareAvailable() -> NSError?
+    public static func isAllHardwareAvailable() -> NSError?
     {
-        return CameraView.createCaptureSession(withMediaType: AVMediaTypeVideo, position: AVCaptureDevicePosition.back).error
+        return CameraView.createCaptureSession(withMediaType: AVMediaType.video, position: AVCaptureDevice.Position.back).error
     }
     
     //==========================================================================================================================================================
     //MARK:                                                        Debug
     //==========================================================================================================================================================
     /// Called from DebugMapViewController when user fakes location.
-    internal func locationNotification(_ sender: Notification)
+    @objc internal func locationNotification(_ sender: Notification)
     {
         if let location = sender.userInfo?["location"] as? CLLocation
         {
@@ -574,12 +575,9 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     }
     
     /// Opening DebugMapViewController
-    internal func debugButtonTap()
+    @objc internal func debugButtonTap()
     {
-       // self.presenter.reload(annotations: self.annotations, reloadType: .userLocationChanged)
-        //return
-
-            // DEBUG
+        // DEBUG
         let bundle = Bundle(for: DebugMapViewController.self)
         let mapViewController = DebugMapViewController(nibName: "DebugMapViewController", bundle: bundle)
         self.present(mapViewController, animated: true, completion: nil)
@@ -595,12 +593,12 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
         {
             self.debugMapButton?.removeFromSuperview()
             
-            let debugMapButton: UIButton = UIButton(type: UIButtonType.custom)
+            let debugMapButton: UIButton = UIButton(type: UIButton.ButtonType.custom)
             debugMapButton.frame = CGRect(x: 5,y: 5,width: 40,height: 40);
-            debugMapButton.addTarget(self, action: #selector(ARViewController.debugButtonTap), for: UIControlEvents.touchUpInside)
-            debugMapButton.setTitle("map", for: UIControlState())
+            debugMapButton.addTarget(self, action: #selector(ARViewController.debugButtonTap), for: UIControl.Event.touchUpInside)
+            debugMapButton.setTitle("map", for: UIControl.State())
             debugMapButton.backgroundColor = UIColor.white.withAlphaComponent(0.5)
-            debugMapButton.setTitleColor(UIColor.black, for: UIControlState())
+            debugMapButton.setTitleColor(UIColor.black, for: UIControl.State())
             self.view.addSubview(debugMapButton)
             self.debugMapButton = debugMapButton
         }
@@ -615,7 +613,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             debugLabel.font = UIFont.boldSystemFont(ofSize: 10)
             debugLabel.frame = CGRect(x: 5, y: self.view.bounds.size.height - 55, width: self.view.bounds.size.width - 10, height: 40)
             debugLabel.numberOfLines = 0
-            debugLabel.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleTopMargin]
+            debugLabel.autoresizingMask = [UIView.AutoresizingMask.flexibleWidth, UIView.AutoresizingMask.flexibleTopMargin]
             debugLabel.textAlignment = NSTextAlignment.left
             view.addSubview(debugLabel)
             self.debugLabel = debugLabel
@@ -664,7 +662,7 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
             
             self.debugPitchSlider?.transform = .identity
             self.debugPitchSlider?.frame = CGRect(x: width - (height - 40) / 2 - 20, y: height/2, width: height - 40, height: 20);
-            self.debugPitchSlider?.transform = CGAffineTransform(rotationAngle: CGFloat(-M_PI * 0.5))
+            self.debugPitchSlider?.transform = CGAffineTransform(rotationAngle: CGFloat(-Double.pi * 0.5))
         }
     }
     
@@ -745,15 +743,27 @@ open class ARViewController: UIViewController, ARTrackingManagerDelegate
     
     /* XIRO */
     public func captureImage(callback: @escaping (UIImage) -> Void) {
-        if let videoConnection = self.stillImageOutput.connection(withMediaType:AVMediaTypeVideo){
+        if let videoConnection = self.stillImageOutput.connection(with:AVMediaType.video){
             self.stillImageOutput.captureStillImageAsynchronously(from:videoConnection, completionHandler: {
                 (sampleBuffer, error) in
-                let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
-                let dataProvider = CGDataProvider.init(data: imageData! as CFData)
-                let cgImageRef = CGImage.init(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
-                let image = UIImage.init(cgImage: cgImageRef!, scale: 1.0, orientation: .right)
-                callback(image)
+                if let sampleBuffer = sampleBuffer {
+                    let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                    let dataProvider = CGDataProvider.init(data: imageData! as CFData)
+                    let cgImageRef = CGImage.init(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+                    let image = UIImage.init(cgImage: cgImageRef!, scale: 1.0, orientation: .right)
+                    callback(image)
+                }
             })
         }
     }
 }
+
+
+
+
+
+
+
+
+
+

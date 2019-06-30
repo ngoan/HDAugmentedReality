@@ -82,7 +82,7 @@ open class TestAnnotationView: ARAnnotationView, UIGestureRecognizerDelegate
         self.layoutUi()
     }
     
-    open func tapGesture()
+    @objc open func tapGesture()
     {
         if let annotation = self.annotation
         {

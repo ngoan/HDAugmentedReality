@@ -12,7 +12,6 @@
 		0C10A15D1BC67B5C009EDF6A /* hdar_close@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0C10A1591BC67B5C009EDF6A /* hdar_close@2x.png */; };
 		0C10A15E1BC67B5C009EDF6A /* hdar_close@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0C10A15A1BC67B5C009EDF6A /* hdar_close@3x.png */; };
 		0CAD4EB31AE6FC14000F2A2A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAD4EB21AE6FC14000F2A2A /* AppDelegate.swift */; };
-		0CAD4EB51AE6FC14000F2A2A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAD4EB41AE6FC14000F2A2A /* ViewController.swift */; };
 		0CAD4EB81AE6FC14000F2A2A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0CAD4EB61AE6FC14000F2A2A /* Main.storyboard */; };
 		0CAD4EBA1AE6FC14000F2A2A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CAD4EB91AE6FC14000F2A2A /* Images.xcassets */; };
 		0CAD4F041AE70A3E000F2A2A /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CAD4F031AE70A3E000F2A2A /* CoreMotion.framework */; };
@@ -25,6 +24,10 @@
 		0CF0F8EA1BC5E70C00C7646E /* ARTrackingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF0F8E31BC5E70C00C7646E /* ARTrackingManager.swift */; };
 		0CF0F8EB1BC5E70C00C7646E /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF0F8E41BC5E70C00C7646E /* ARViewController.swift */; };
 		0CF0F8EC1BC5E70C00C7646E /* DebugMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CF0F8E61BC5E70C00C7646E /* DebugMapViewController.swift */; };
+		252489E322C94B27005338B3 /* ARPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252489E222C94B27005338B3 /* ARPresenter.swift */; };
+		252489E522C94B2D005338B3 /* ARPresenter+Stacking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252489E422C94B2D005338B3 /* ARPresenter+Stacking.swift */; };
+		252489E722C94B37005338B3 /* ARPresenterTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252489E622C94B37005338B3 /* ARPresenterTransform.swift */; };
+		252489EA22C94F0E005338B3 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252489E922C94F0E005338B3 /* CameraView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,10 @@
 		0CF0F8E31BC5E70C00C7646E /* ARTrackingManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARTrackingManager.swift; sourceTree = "<group>"; };
 		0CF0F8E41BC5E70C00C7646E /* ARViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		0CF0F8E61BC5E70C00C7646E /* DebugMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugMapViewController.swift; sourceTree = "<group>"; };
+		252489E222C94B27005338B3 /* ARPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARPresenter.swift; sourceTree = "<group>"; };
+		252489E422C94B2D005338B3 /* ARPresenter+Stacking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARPresenter+Stacking.swift"; sourceTree = "<group>"; };
+		252489E622C94B37005338B3 /* ARPresenterTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARPresenterTransform.swift; sourceTree = "<group>"; };
+		252489E922C94F0E005338B3 /* CameraView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +136,10 @@
 		0CF0F8DF1BC5E70C00C7646E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				252489E822C94F06005338B3 /* External */,
+				252489E622C94B37005338B3 /* ARPresenterTransform.swift */,
+				252489E422C94B2D005338B3 /* ARPresenter+Stacking.swift */,
+				252489E222C94B27005338B3 /* ARPresenter.swift */,
 				0CF0F8E01BC5E70C00C7646E /* ARAnnotation.swift */,
 				0CF0F8E11BC5E70C00C7646E /* ARAnnotationView.swift */,
 				0CF0F8E21BC5E70C00C7646E /* ARConfiguration.swift */,
@@ -146,6 +157,14 @@
 				0CF0F8E61BC5E70C00C7646E /* DebugMapViewController.swift */,
 			);
 			path = Debug;
+			sourceTree = "<group>";
+		};
+		252489E822C94F06005338B3 /* External */ = {
+			isa = PBXGroup;
+			children = (
+				252489E922C94F0E005338B3 /* CameraView.swift */,
+			);
+			path = External;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,6 +209,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -226,11 +246,14 @@
 			files = (
 				0CB2C2471AF18C620006E949 /* TestAnnotationView.swift in Sources */,
 				0CF0F8E81BC5E70C00C7646E /* ARAnnotationView.swift in Sources */,
-				0CAD4EB51AE6FC14000F2A2A /* ViewController.swift in Sources */,
+				252489EA22C94F0E005338B3 /* CameraView.swift in Sources */,
+				252489E522C94B2D005338B3 /* ARPresenter+Stacking.swift in Sources */,
 				0CF0F8E71BC5E70C00C7646E /* ARAnnotation.swift in Sources */,
 				0CAD4EB31AE6FC14000F2A2A /* AppDelegate.swift in Sources */,
 				0CF0F8EB1BC5E70C00C7646E /* ARViewController.swift in Sources */,
 				0CF0F8E91BC5E70C00C7646E /* ARConfiguration.swift in Sources */,
+				252489E722C94B37005338B3 /* ARPresenterTransform.swift in Sources */,
+				252489E322C94B27005338B3 /* ARPresenter.swift in Sources */,
 				0CF0F8EC1BC5E70C00C7646E /* DebugMapViewController.swift in Sources */,
 				0CF0F8EA1BC5E70C00C7646E /* ARTrackingManager.swift in Sources */,
 			);
@@ -350,7 +373,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Huis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e28b5d0e-47ea-46a9-9805-9d88b59efa0f";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -367,7 +390,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "Huis.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "e28b5d0e-47ea-46a9-9805-9d88b59efa0f";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
