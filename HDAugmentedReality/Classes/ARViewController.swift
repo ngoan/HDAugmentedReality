@@ -130,8 +130,8 @@ import CoreLocation
         self.trackingManager.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(ARViewController.locationNotification(_:)), name: NSNotification.Name(rawValue: "kNotificationLocationSet"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ARViewController.appWillEnterForeground(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ARViewController.appDidEnterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ARViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ARViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
         self.initialize()
     }
     
@@ -419,7 +419,7 @@ import CoreLocation
         self.cameraView.startRunning()
         self.trackingManager.startTracking(notifyLocationFailure: notifyLocationFailure)
         self.displayTimer = CADisplayLink(target: self, selector: #selector(ARViewController.displayTimerTick))
-        self.displayTimer?.add(to: RunLoop.current, forMode: RunLoop.Mode.defaultRunLoopMode)
+        self.displayTimer?.add(to: RunLoop.current, forMode: RunLoop.Mode.default)
     }
     
     fileprivate func stopCameraAndTracking()
@@ -536,7 +536,7 @@ import CoreLocation
         }
         
         // Close button - make it customizable
-        let closeButton: UIButton = UIButton(type: UIButton.ButtonType.custom)
+        let closeButton: UIButton = UIButton(type: .custom)
         closeButton.setImage(closeButtonImage, for: UIControl.State.normal);
         closeButton.frame = CGRect(x: self.view.bounds.size.width - 45, y: 5,width: 40,height: 40)
         closeButton.addTarget(self, action: #selector(ARViewController.closeButtonTap), for: UIControl.Event.touchUpInside)
@@ -593,7 +593,7 @@ import CoreLocation
         {
             self.debugMapButton?.removeFromSuperview()
             
-            let debugMapButton: UIButton = UIButton(type: UIButton.ButtonType.custom)
+            let debugMapButton: UIButton = UIButton(type: .custom)
             debugMapButton.frame = CGRect(x: 5,y: 5,width: 40,height: 40);
             debugMapButton.addTarget(self, action: #selector(ARViewController.debugButtonTap), for: UIControl.Event.touchUpInside)
             debugMapButton.setTitle("map", for: UIControl.State())

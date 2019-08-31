@@ -133,7 +133,7 @@ public class ARTrackingManager: NSObject, CLLocationManagerDelegate
         self.locationManager.delegate = self
         
         NotificationCenter.default.addObserver(self, selector: #selector(ARTrackingManager.deviceOrientationDidChange), name:
-            NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+            UIDevice.orientationDidChangeNotification, object: nil)
         self.deviceOrientationDidChange()
     }
     
